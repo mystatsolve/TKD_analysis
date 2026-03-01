@@ -16,6 +16,7 @@ TKD_analysis/
 ├── webcam_head_tracking_retrack.py   # 실시간 웹캠 추적
 ├── webcam_head_tracking_trail.py     # 실시간 웹캠 추적 + 궤적(Trail) 시각화
 ├── video_head_tracking_retrack.py    # 녹화 영상 파일 추적
+├── video_head_tracking_trail.py      # 녹화 영상 파일 추적 + 궤적(Trail) 시각화
 ├── requirements.txt                  # Python 패키지 목록
 └── README.md
 ```
@@ -83,6 +84,32 @@ python video_head_tracking_retrack.py --video my_video.mp4 --start-frame 300
 | `--conf-thr` | 0.40 | 템플릿 매칭 유사도 임계값 (0~1) |
 | `--fail-max` | 90 | FAILED 전환까지 허용 실패 프레임 수 |
 | `--out-dir` | output | 결과 저장 폴더 |
+
+### 녹화 영상 파일 + 궤적(Trail) 시각화
+```bash
+python video_head_tracking_trail.py --video my_video.mp4
+python video_head_tracking_trail.py --video my_video.mp4 --speed 0.5
+python video_head_tracking_trail.py --video my_video.mp4 --max-trail 300
+```
+
+| 인자 | 기본값 | 설명 |
+|------|--------|------|
+| `--video` | **(필수)** | 입력 영상 파일 경로 (mp4, avi, mov 등) |
+| `--speed` | 1.0 | 재생 속도 배율 (0.5=절반, 2.0=두 배) |
+| `--start-frame` | 0 | 시작 프레임 번호 |
+| `--loop` | False | 영상 끝에서 처음으로 반복 |
+| `--max-trail` | 600 | 저장할 최대 궤적 점 수 |
+| `--rect-w` | 480 | Bird's-Eye 뷰 가로 크기 (px) |
+| `--rect-h` | 480 | Bird's-Eye 뷰 세로 크기 (px) |
+| `--search-scale` | 3.5 | 재탐색 영역 확장 배수 |
+| `--conf-thr` | 0.40 | 템플릿 매칭 유사도 임계값 (0~1) |
+| `--fail-max` | 90 | FAILED 전환까지 허용 실패 프레임 수 |
+| `--out-dir` | output | 결과 저장 폴더 |
+
+- HEAD 1 궤적: **파란색** 선 / HEAD 2 궤적: **빨간색** 선
+- 오래된 경로일수록 흐릿하게 페이드 처리
+- 궤적은 오른쪽 **Bird's-Eye 뷰에서만** 표시
+- **T 키**: 궤적만 초기화 (추적은 계속 유지)
 
 ---
 
