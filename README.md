@@ -1,0 +1,115 @@
+# TKD Analysis — Head Tracking with Auto Re-tracking
+
+## 개요
+
+웹캠 영상에서 최대 2명의 머리 위치를 추적하는 프로그램입니다.
+한 번 클릭하면 OpenCV CSRT 트래커가 자동으로 머리를 따라가며,
+추적이 끊겼을 때 템플릿 매칭으로 자동 재탐색합니다.
+호모그래피(Homography)를 통해 비스듬한 카메라 영상을 Bird's-Eye 직각 좌표로 변환합니다.
+
+---
+
+## 파일 구조
+
+```
+TKD_analysis/
+├── webcam_head_tracking_retrack.py   # 메인 실행 파일
+├── requirements.txt                  # Python 패키지 목록
+└── README.md
+```
+
+---
+
+## 설치
+
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+## 실행
+
+```bash
+python webcam_head_tracking_retrack.py
+```
+
+### 옵션 인자
+
+| 인자 | 기본값 | 설명 |
+|------|--------|------|
+| `--cam-id` | 0 | 카메라 번호 |
+| `--rect-w` | 480 | Bird's-Eye 뷰 가로 크기 (px) |
+| `--rect-h` | 480 | Bird's-Eye 뷰 세로 크기 (px) |
+| `--search-scale` | 3.5 | 재탐색 영역 확장 배수 |
+| `--conf-thr` | 0.40 | 템플릿 매칭 유사도 임계값 (0~1) |
+| `--fail-max` | 90 | FAILED 전환까지 허용 실패 프레임 수 |
+| `--out-dir` | ViTPose/output | 결과(CSV, 스냅샷) 저장 폴더 |
+
+예시:
+```bash
+python webcam_head_tracking_retrack.py --cam-id 1 --conf-thr 0.5
+```
+
+---
+
+## 사용 방법
+
+### Step 1 — 캘리브레이션 (호모그래피 기준점 설정)
+실제 공간에서 직사각형을 이루는 꼭짓점 4개를 카메라 화면에서 순서대로 클릭합니다.
+```
+(1) 왼쪽 위 → (2) 오른쪽 위 → (3) 오른쪽 아래 → (4) 왼쪽 아래
+```
+클릭 완료 후 **ENTER** 키를 누르면 호모그래피가 확정됩니다.
+
+### Step 2 — 머리 추적 시작
+- **1** 또는 **2** 키로 슬롯(HEAD 1 / HEAD 2) 선택
+- 화면에서 추적할 머리 위치를 **왼쪽 클릭** → 자동 추적 시작
+
+---
+
+## 상태 표시
+
+| 상태 | 색상 | 설명 |
+|------|------|------|
+| TRACKING | 마젠타 / 시안 | 정상 추적 중 |
+| SEARCHING | 주황 | 추적 끊김 → 템플릿 매칭으로 자동 재탐색 중 |
+| FAILED | 빨강 | 재탐색 실패 → 수동 재클릭 필요 |
+
+---
+
+## 키 조작
+
+| 키 | 동작 |
+|----|------|
+| `1` / `2` | 슬롯 선택 (HEAD 1 / HEAD 2) |
+| Left-click | 선택 슬롯 트래커 초기화 / 재초기화 |
+| Right-click | 선택 슬롯 추적 중지 |
+| `C` | 선택 슬롯 추적 중지 |
+| `R` | 전체 초기화 (재캘리브레이션) |
+| `S` | 스냅샷 저장 |
+| `Q` / `ESC` | 종료 & CSV 저장 |
+
+---
+
+## CSV 출력 컬럼
+
+| 컬럼 | 설명 |
+|------|------|
+| frame | 프레임 번호 |
+| timestamp | 경과 시간 (초) |
+| head_id | 머리 번호 (1 또는 2) |
+| raw_x, raw_y | 원본 카메라 픽셀 좌표 |
+| rect_x, rect_y | 호모그래피 보정 후 Bird's-Eye 좌표 |
+| rect_x_norm, rect_y_norm | 0~1 정규화 좌표 |
+| homography_applied | 호모그래피 적용 여부 (0/1) |
+| state | 추적 상태 (tracking / searching / failed / none) |
+| retrack_score | 재탐색 시 템플릿 매칭 유사도 점수 |
+
+---
+
+## 의존성
+
+- Python 3.8 이상
+- opencv-python >= 4.8.0
+- numpy >= 1.24.0
