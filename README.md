@@ -14,6 +14,7 @@
 ```
 TKD_analysis/
 ├── webcam_head_tracking_retrack.py   # 실시간 웹캠 추적
+├── webcam_head_tracking_trail.py     # 실시간 웹캠 추적 + 궤적(Trail) 시각화
 ├── video_head_tracking_retrack.py    # 녹화 영상 파일 추적
 ├── requirements.txt                  # Python 패키지 목록
 └── README.md
@@ -36,6 +37,22 @@ pip install -r requirements.txt
 python webcam_head_tracking_retrack.py
 python webcam_head_tracking_retrack.py --cam-id 1 --conf-thr 0.5
 ```
+
+### 웹캠 + 궤적(Trail) 시각화
+```bash
+python webcam_head_tracking_trail.py
+python webcam_head_tracking_trail.py --max-trail 300
+```
+
+| 추가 인자 | 기본값 | 설명 |
+|-----------|--------|------|
+| `--max-trail` | 600 | 저장할 최대 궤적 점 수 (30fps 기준 약 20초) |
+
+- HEAD 1 궤적: **파란색** 선
+- HEAD 2 궤적: **빨간색** 선
+- 오래된 경로일수록 흐릿하게 페이드 처리
+- 카메라 뷰 + Bird's-Eye 뷰 양쪽에 궤적 표시
+- **T 키**: 궤적만 초기화 (추적은 계속 유지)
 
 | 인자 | 기본값 | 설명 |
 |------|--------|------|
